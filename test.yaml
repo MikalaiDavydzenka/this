@@ -1,0 +1,25 @@
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: test
+      vars:
+        volumes_yaml: |
+          {% for service in stateful_services: %}
+          {% for vol_index in range(service.volumes_per_node): %}
+          {% set volume_name_prefix = service.name %}
+          {% if volumes_pre_node > 1 %}
+            - name: {{ service.name }}-{{ namespace }}
+              size: {{ service.volume_size }}
+          {% endfor %}
+          {% endfor %}
+      debug:
+        # msg: "{{ '%s-%s' | format(1, 2) }}"
+        msg: "{{ volumes_yaml }}"
+        # msg: "{{ [item.name] | product(range(item.volumes_per_node)) }}"
+        # msg: |
+        #   - name: create local folders for persistent volumes
+        #     file:
+        #       path: "/opt/pv-{{ item.name }}-{{ namespace }}"
+        #       state: "{{ 'directory' if action == 'install' else 'absent' }}"
+      # loop: "{{ volumes_yaml | from_yaml }}"

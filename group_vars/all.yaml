@@ -3,4 +3,5 @@ namespace: minio-registry
 
 stateful_services:
   - name: minio
-    volume_size: 1Gb
+    volume_size: 1Gi
+    volumes_per_node: 4

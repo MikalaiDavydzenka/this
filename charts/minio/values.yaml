@@ -103,7 +103,7 @@ volumePermissions:
 ## MinIO server mode. Allowed values: standalone or distributed.
 ## Distributed Minio ref: https://docs.minio.io/docs/distributed-minio-quickstart-guide
 ##
-mode: standalone
+mode: distributed
 
 ## MinIO deployment parameters
 ## Only when mode is 'standalone'
@@ -295,7 +295,7 @@ persistence:
   ##
   # existingClaim:
 
-  ## Data volume mount path
+  ## Data volume mount path prefix
   ##
   mountPath: /data
 

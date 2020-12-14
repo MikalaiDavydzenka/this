@@ -4,4 +4,4 @@
     template: "pvc.yaml"
   loop_control:
     loop_var: service
-  loop: "{{ services }}"
+  loop: "{{ stateful_services }}"

@@ -20,12 +20,15 @@
             name: "{{ namespace }}"
             labels:
               name: "{{ namespace }}"
-    - name: helm chart bitnami/kafka
+    - name: helm chart minio
+      vars:
+        service: minio
       kubernetes.core.helm:
         state: "{{ 'present' if action == 'install' else 'absent' }}"
-        name: kafka
-        chart_ref: charts/minio
+        name: "{{ service }}"
+        chart_ref: "charts/{{ service }}"
         release_namespace: "{{ namespace }}"
         create_namespace: true
         values:
-          ttt: ttt
+          persistence:
+            storageClass: "{{ service }}-{{ namespace }}"
