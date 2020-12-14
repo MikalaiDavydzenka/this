@@ -1,0 +1,31 @@
+- hosts: k8s_workers
+  gather_facts: no
+  become: yes
+  roles:
+    - role: local_volumes
+
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  roles:
+    - role: persistent_volume
+  post_tasks:
+    - name: "{{ namespace }} namespace"
+      kubernetes.core.k8s:
+        state: "{{ 'present' if action == 'install' else 'absent' }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ namespace }}"
+            labels:
+              name: "{{ namespace }}"
+    - name: helm chart bitnami/kafka
+      kubernetes.core.helm:
+        state: "{{ 'present' if action == 'install' else 'absent' }}"
+        name: kafka
+        chart_ref: charts/minio
+        release_namespace: "{{ namespace }}"
+        create_namespace: true
+        values:
+          ttt: ttt

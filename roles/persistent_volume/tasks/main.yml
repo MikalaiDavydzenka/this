@@ -1,0 +1,7 @@
+- name: "create persistent volume yaml"
+  kubernetes.core.k8s:
+    state: "{{ 'present' if action == 'install' else 'absent' }}"
+    template: "pvc.yaml"
+  loop_control:
+    loop_var: service
+  loop: "{{ services }}"

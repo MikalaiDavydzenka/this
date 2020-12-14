@@ -1,0 +1,33 @@
+---
+- name: MetalLB metallb-system
+  kubernetes.core.k8s:
+    state: "{{ 'present' if action == 'install' else 'absent' }}"
+    template: "{{ item }}"
+  loop:
+    - namespace.yaml
+    - metallb.yaml
+    - config.yaml
+
+- name: MetalLB memberlist secret
+  vars:
+    memberlist_secret: |
+      {{
+        lookup(
+          name='kubernetes.core.k8s',
+          kind='Secret',
+          namespace='metallb-system',
+          resource_name='memberlist',
+        )
+      }}
+  when: not memberlist_secret
+  block:
+    - name: Generate secret
+      command: openssl rand -base64 128
+      register: generated_memberlist_secret
+
+    - name: MetalLB memberlist secret
+      kubernetes.core.k8s:
+        state: "{{ 'present' if action == 'install' else 'absent' }}"
+        template: secret.yaml
+      vars:
+        secretkey: "{{ generated_memberlist_secret.stdout.replace('\n', '') }}"

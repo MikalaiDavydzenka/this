@@ -1,0 +1,6 @@
+action: install
+namespace: minio-registry
+
+stateful_services:
+  - name: minio
+    volume_size: 1Gb
