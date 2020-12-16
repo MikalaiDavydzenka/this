@@ -1,7 +1,13 @@
+- name: create local folders for persistent volumes
+  file:
+    path: "/opt/pv-{{ item.name }}-{{ namespace }}"
+    state: "{{ 'directory' if action == 'install' else 'absent' }}"
+  loop: "{{ helper_volumes }}"
+  become: true
+
 - name: "create persistent volume yaml"
-  kubernetes.core.k8s:
+  local_action:
+    module: kubernetes.core.k8s
     state: "{{ 'present' if action == 'install' else 'absent' }}"
     template: "pvc.yaml"
-  loop_control:
-    loop_var: service
-  loop: "{{ stateful_services }}"
+  run_once: True

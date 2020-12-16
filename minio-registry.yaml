@@ -1,14 +1,11 @@
 - hosts: k8s_workers
   gather_facts: no
-  become: yes
   roles:
-    - role: local_volumes
+    - role: persistent_volume
 
 - hosts: localhost
   gather_facts: no
   connection: local
-  roles:
-    - role: persistent_volume
   post_tasks:
     - name: "{{ namespace }} namespace"
       kubernetes.core.k8s:

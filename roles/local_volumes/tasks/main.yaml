@@ -1,6 +1,0 @@
----
-- name: create local folders for persistent volumes
-  file:
-    path: "/opt/pv-{{ item.name }}-{{ namespace }}"
-    state: "{{ 'directory' if action == 'install' else 'absent' }}"
-  loop: "{{ stateful_services }}"

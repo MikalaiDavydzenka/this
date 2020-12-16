@@ -100,7 +100,6 @@ Compile all warnings into a single message, and call fail.
 {{- define "minio.validateValues" -}}
 {{- $messages := list -}}
 {{- $messages := append $messages (include "minio.validateValues.mode" .) -}}
-{{- $messages := append $messages (include "minio.validateValues.replicaCount" .) -}}
 {{- $messages := without $messages "" -}}
 {{- $message := join "\n" $messages -}}
 
@@ -118,15 +117,6 @@ minio: mode
 {{- end -}}
 {{- end -}}
 
-{{/* Validate values of MinIO - number of replicas must be even, greater than 4 and lower than 32 */}}
-{{- define "minio.validateValues.replicaCount" -}}
-{{- $replicaCount := int .Values.statefulset.replicaCount }}
-{{- if and (eq .Values.mode "distributed") (or (eq (mod $replicaCount 2) 1) (lt $replicaCount 4) (gt $replicaCount 32)) -}}
-minio: replicaCount
-    Number of replicas must be even, greater than 4 and lower than 32!!
-    Please set a valid number of replicas (--set statefulset.replicaCount=X)
-{{- end -}}
-{{- end -}}
 
 {{/* Check if there are rolling tags in the images */}}
 {{- define "minio.checkRollingTags" -}}

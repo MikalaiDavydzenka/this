@@ -1,0 +1,14 @@
+helper_volumes_yaml: |
+  {% for service in stateful_services: %}
+  {% set volumes_per_node = service.volumes_per_node | default(1) %}
+  {% for vol_index in range(volumes_per_node): %}
+  {% set volume_name_prefix = service.name %}
+  {% if volumes_per_node > 1 %}
+  {% set volume_name_prefix = (service.name ~ "-" ~ vol_index) %}
+  {% endif %}
+    - name: {{ volume_name_prefix }}-{{ namespace }}
+      size: {{ service.volume_size }}
+      belong_to_service: {{ service.name }}
+  {% endfor %}
+  {% endfor %}
+helper_volumes: "{{ helper_volumes_yaml | from_yaml }}"

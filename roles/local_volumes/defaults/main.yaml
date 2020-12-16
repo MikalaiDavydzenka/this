@@ -1,5 +1,0 @@
-stateful_services: {}
-    # - name: kafka
-    #   volume_size: 5Gi
-    # - name: zookeeper
-    #   volume_size: 5Gi

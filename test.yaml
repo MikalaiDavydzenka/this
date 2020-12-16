@@ -1,25 +1,32 @@
-- hosts: localhost
+# - hosts: localhost
+#   gather_facts: no
+#   connection: local
+#   tasks:
+#     - name: test
+#       # vars:
+#       #   volumes_yaml: |
+#       #     {% for service in stateful_services: %}
+#       #     {% for vol_index in range(service.volumes_per_node): %}
+#       #     {% set volume_name_prefix = service.name %}
+#       #     {% if service.volumes_per_node > 1 %}
+#       #     {% set volume_name_prefix = (service.name ~ "-" ~ vol_index) %}
+#       #     {% endif %}
+#       #       - name: {{ volume_name_prefix }}-{{ namespace }}
+#       #         size: {{ service.volume_size }}
+#       #     {% endfor %}
+#       #     {% endfor %}
+#       debug:
+#         # msg: "{{ '%s-%s' | format(1, 2) }}"
+#         msg: "{{ item.name }}"
+#         # msg: "{{ [item.name] | product(range(item.volumes_per_node)) }}"
+#         # msg: |
+#         #   - name: create local folders for persistent volumes
+#         #     file:
+#         #       path: "/opt/pv-{{ item.name }}-{{ namespace }}"
+#         #       state: "{{ 'directory' if action == 'install' else 'absent' }}"
+#       loop: "{{ helper_volumes }}"
+
+- hosts: k8s_workers
   gather_facts: no
-  connection: local
-  tasks:
-    - name: test
-      vars:
-        volumes_yaml: |
-          {% for service in stateful_services: %}
-          {% for vol_index in range(service.volumes_per_node): %}
-          {% set volume_name_prefix = service.name %}
-          {% if volumes_pre_node > 1 %}
-            - name: {{ service.name }}-{{ namespace }}
-              size: {{ service.volume_size }}
-          {% endfor %}
-          {% endfor %}
-      debug:
-        # msg: "{{ '%s-%s' | format(1, 2) }}"
-        msg: "{{ volumes_yaml }}"
-        # msg: "{{ [item.name] | product(range(item.volumes_per_node)) }}"
-        # msg: |
-        #   - name: create local folders for persistent volumes
-        #     file:
-        #       path: "/opt/pv-{{ item.name }}-{{ namespace }}"
-        #       state: "{{ 'directory' if action == 'install' else 'absent' }}"
-      # loop: "{{ volumes_yaml | from_yaml }}"
+  roles:
+    - role: persistent_volume

@@ -135,9 +135,7 @@ statefulset:
   ##
   podManagementPolicy: Parallel
 
-  ## Number of replicas, it must even and greater than 4
-  ##
-  replicaCount: 4
+  replicaCount: 3
 
 ## Use existing secret (ignores accessKey, and secretKey passwords)
 ##
