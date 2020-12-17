@@ -1,4 +1,3 @@
-{{- if eq .Values.mode "distributed" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -13,4 +12,3 @@ spec:
       port: {{ .Values.service.port }}
       targetPort: minio
   selector: {{- include "common.labels.matchLabels" . | nindent 4 }}
-{{- end }}

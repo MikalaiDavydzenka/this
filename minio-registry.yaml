@@ -29,3 +29,4 @@
         values:
           persistence:
             storageClass: "{{ service }}-{{ namespace }}"
+            size: "{{ stateful_services.minio.volume_size }}"

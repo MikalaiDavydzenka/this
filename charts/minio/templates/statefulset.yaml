@@ -1,6 +1,4 @@
-{{- if eq .Values.mode "distributed" }}
 {{- $replicaCount := int .Values.statefulset.replicaCount }}
-{{- if and (eq (mod $replicaCount 2) 0) (gt $replicaCount 3) (lt $replicaCount 33) }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -77,6 +75,10 @@ spec:
       {{- end }}
       containers:
         - name: minio
+          command:
+            - "minio"
+            - "server"
+            - "http://minio-{1...3}.minio-headless/data{1...4}"
           image: {{ include "minio.image" . }}
           imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
           {{- if .Values.securityContext.enabled }}
@@ -189,6 +191,4 @@ spec:
           requests:
             storage: {{ $.Values.persistence.size | quote }}
     {{- end }}
-{{- end }}
-{{- end }}
 {{- end }}

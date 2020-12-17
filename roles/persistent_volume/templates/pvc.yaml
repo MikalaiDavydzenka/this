@@ -1,9 +1,9 @@
-{% for service in stateful_services %}
+{% for service_name in stateful_services %}
 ---
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
-  name: {{ service.name }}-{{ namespace }}
+  name: {{ service_name }}-{{ namespace }}
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 {% endfor %}
@@ -17,7 +17,7 @@ kind: PersistentVolume
 metadata:
   name: {{ volume.name }}-{{ namespace }}-{{ node_index }}
 spec:
-  storageClassName: {{ volume.name }}-{{ namespace }}
+  storageClassName: {{ volume.belong_to_service }}-{{ namespace }}
   capacity:
     storage: {{ volume.size }}
   accessModes:
