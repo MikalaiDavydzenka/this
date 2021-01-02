@@ -5,3 +5,5 @@ stateful_services:
   minio:
     volume_size: 1Gi
     volumes_per_node: 4
+  docker-registry:
+    volume_size: 1Gi

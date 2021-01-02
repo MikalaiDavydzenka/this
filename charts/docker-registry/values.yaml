@@ -1,0 +1,93 @@
+# Default values for docker-registry.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+
+updateStrategy: {}
+podAnnotations: {}
+podLabels: {}
+
+image:
+  repository: registry
+  tag: 2.7.1
+  pullPolicy: IfNotPresent
+# imagePullSecrets:
+    # - name: docker
+service:
+  name: registry
+  type: ClusterIP
+  # clusterIP:
+  port: 5000
+  # nodePort:
+  # loadBalancerIP:
+  # loadBalancerSourceRanges:
+  annotations: {}
+  # foo.io/bar: "true"
+resources:
+  limits:
+   cpu: 100m
+   memory: 128Mi
+  requests:
+   cpu: 10m
+   memory: 10Mi
+persistence:
+  accessMode: 'ReadWriteOnce'
+  enabled: true
+  size: 10Gi
+  # storageClass: '-'
+
+# set the type of filesystem to use: filesystem, s3
+storage: filesystem
+
+# Set this to name of secret for tls certs
+# tlsSecretName: registry.docker.example.com
+secrets:
+  haSharedSecret: ""
+  htpasswd: ""
+
+configData:
+  version: 0.1
+  log:
+    fields:
+      service: registry
+  storage:
+    cache:
+      blobdescriptor: inmemory
+  http:
+    addr: :5000
+    headers:
+      X-Content-Type-Options: [nosniff]
+  health:
+    storagedriver:
+      enabled: true
+      interval: 10s
+      threshold: 3
+
+securityContext:
+  enabled: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+priorityClassName: ""
+
+nodeSelector: {}
+
+affinity: {}
+
+tolerations: []
+
+extraVolumeMounts: []
+## Additional volumeMounts to the registry container.
+#  - mountPath: /secret-data
+#    name: cloudfront-pem-secret
+#    readOnly: true
+
+extraVolumes: []
+## Additional volumes to the pod.
+#  - name: cloudfront-pem-secret
+#    secret:
+#      secretName: cloudfront-credentials
+#      items:
+#        - key: cloudfront.pem
+#          path: cloudfront.pem
+#          mode: 511

@@ -1,0 +1,28 @@
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: "{{ namespace }} namespace"
+      kubernetes.core.k8s:
+        state: "{{ 'present' if action == 'install' else 'absent' }}"
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ namespace }}"
+            labels:
+              name: "{{ namespace }}"
+    - name: helm chart docker-registry
+      vars:
+        service: docker-registry
+      kubernetes.core.helm:
+        state: "{{ 'present' if action == 'install' else 'absent' }}"
+        name: "{{ service }}"
+        chart_ref: "charts/{{ service }}"
+        release_namespace: "{{ namespace }}"
+        create_namespace: true
+        values:
+          persistence:
+            storageClass: local-path
+            #"{{ service }}-{{ namespace }}"
+            size: "{{ stateful_services['docker-registry'].volume_size }}"
