@@ -1,0 +1,31 @@
+- name: get lxc profiles
+  command: lxc profile list --format yaml
+  register: existing_lxc_profiles
+
+- name: format lxc profiles
+  vars:
+    profiles_text: |
+      #jinja2: line_statement_prefix:'#'
+      # set profiles = existing_lxc_profiles.stdout | from_yaml
+      # for profile in profiles:
+      {{ profile.name }}: {{ profile | to_json }}
+      # endfor
+  set_fact:
+    existing_lxc_profiles: "{{ profiles_text | from_yaml }}"
+
+- name: create profile if it doesn't exist
+  command: lxc profile create {{ profile.name }}
+  loop: "{{ lxc_profiles }}"
+  loop_control:
+    loop_var: profile
+    label: create {{ profile.name }} profile
+  when: profile.name not in existing_lxc_profiles
+
+- name: update profile
+  command:
+    cmd: lxc profile edit {{ profile.name }}
+    stdin: "{{ profile | to_yaml }}"
+  loop: "{{ lxc_profiles }}"
+  loop_control:
+    loop_var: profile
+    label: update {{ profile.name }} profile

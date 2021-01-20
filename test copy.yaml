@@ -1,0 +1,15 @@
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: test
+      debug:
+        msg: |
+          {% for index in range(4): %}
+          - {{ index }}
+          {% endfor %}
+
+# - hosts: k8s_workers
+#   gather_facts: no
+#   roles:
+#     - role: persistent_volume

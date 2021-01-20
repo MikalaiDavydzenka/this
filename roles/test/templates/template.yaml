@@ -1,0 +1,30 @@
+#jinja2: line_statement_prefix:'#', line_comment_prefix:'##'
+
+# set config | from_yaml | to_yaml
+address-pools:
+- name: metallb-ip-space
+  protocol: layer2
+  addresses:
+  # for pool_range in pool_ranges.split(","):
+    # if pool_range:
+      - {{ pool_range }}
+    # endif
+  # endfor
+# if pool_range_for_dmz:
+- name: metallb-ip-space-for-dmz
+  protocol: layer2
+  addresses:
+  # for address in pool_range_for_dmz.split():
+  - {{ address }}
+  # endfor
+# endif
+# endset
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    {{ config | indent(4, False) }}
