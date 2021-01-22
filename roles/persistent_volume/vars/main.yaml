@@ -9,6 +9,7 @@ helper_volumes_yaml: |
     - name: {{ volume_name_prefix }}-{{ namespace }}
       size: {{ service.volume_size }}
       belong_to_service: {{ service_name }}
+      local_path: /opt/pv-{{ volume_name_prefix }}-{{ namespace }}
   {% endfor %}
   {% endfor %}
 helper_volumes: "{{ helper_volumes_yaml | from_yaml }}"

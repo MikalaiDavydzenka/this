@@ -1,6 +1,8 @@
 - hosts: localhost
   gather_facts: no
   connection: local
+  vars:
+    namespace: default
   tasks:
     - name: "{{ namespace }} namespace"
       kubernetes.core.k8s:

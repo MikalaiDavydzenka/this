@@ -1,9 +1,10 @@
 action: install
-namespace: minio-registry
+namespace: default
+cluster_in_docker: true # k3s in docker
 
 stateful_services:
-  minio:
-    volume_size: 1Gi
-    volumes_per_node: 4
+  # minio:
+  #   volume_size: 1Gi
+  #   volumes_per_node: 4
   docker-registry:
     volume_size: 1Gi

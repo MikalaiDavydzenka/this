@@ -1,9 +1,10 @@
 - name: create local folders for persistent volumes
   file:
-    path: "/opt/pv-{{ item.name }}-{{ namespace }}"
+    path: "{{ item.local_path }}"
     state: "{{ 'directory' if action == 'install' else 'absent' }}"
   loop: "{{ helper_volumes }}"
   become: true
+  when: not cluster_in_docker
 
 - name: "create persistent volume yaml"
   local_action:

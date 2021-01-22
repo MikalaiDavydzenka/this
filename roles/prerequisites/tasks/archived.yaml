@@ -1,0 +1,31 @@
+- name: check {{ name }} binary
+  stat:
+    path: "{{ binary_system_path }}/{{ binary_name }}"
+    checksum_algorithm: "{{ (binary_checksum | default('sha256:')).split(':')[0] }}"
+  register: binary_stat
+
+- name: ensure binary
+  when: binary_stat.stat.get('checksum') != (binary_checksum | default('sha256:')).split(':')[1]
+  block:
+  - name: get {{ name }} arch
+    get_url:
+      url: "{{ url }}"
+      dest: "{{ archive_filename }}"
+      checksum: "{{ archive_checksum | default(omit) }}"
+
+  - name: ensure {{ name }} temp dir
+    file:
+      path: "{{ archive_tmp_dir }}"
+      state: directory
+
+  - name: unpack {{ name }}
+    unarchive:
+      src: "{{ archive_filename }}"
+      dest: "{{ archive_tmp_dir }}"
+
+  - name: copy {{ name }} binary
+    copy:
+      src: "{{ archive_tmp_dir }}/{{ archive_binary_path }}"
+      dest: "{{ binary_system_path }}/{{ binary_name }}"
+      mode: "0755"
+    become: true

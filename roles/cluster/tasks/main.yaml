@@ -1,0 +1,35 @@
+- include_vars: "{{ role_path }}/../persistent_volume/vars/main.yaml"
+
+- name: generate docker-compose.yaml
+  template:
+    dest: "{{ playbook_dir }}/docker-compose.yaml"
+    src: docker-compose.yaml
+
+- name: docker-compose up
+  community.general.docker_compose:
+    project_src: "{{ playbook_dir }}"
+    state: "{{ 'present' if action == 'install' else 'absent' }}"
+
+- name: "wait for ABC to come up"
+  uri:
+    url: "https://localhost:6443/readyz"
+    status_code: [200, 401]
+    validate_certs: false
+  register: result
+  until: result.status in [200, 401]
+  retries: 60
+  delay: 1
+  when: action == 'install'
+
+- name: copy kube config
+  copy:
+    src: "{{ playbook_dir }}/kubeconfig.yaml"
+    dest: "~/.kube/config"
+
+- meta: refresh_inventory
+
+- name: debug
+  debug:
+    msg:
+      - "{{ helper_volumes }}"
+      - "{{ groups }}"

@@ -1,0 +1,7 @@
+archive_filename: "/tmp/{{ url | urlsplit('path') | basename }}"
+archive_tmp_dir: /tmp/{{ name }}-{{ version }}-{{ platform }}
+# archive_checksum: ":"
+
+binary_name: "{{ archive_binary_path | basename }}"
+binary_system_path: /usr/local/bin
+# binary_checksum: ":"

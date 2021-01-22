@@ -1,0 +1,37 @@
+- name: check kubectl
+  stat:
+    path: /usr/local/bin/kubectl
+  register: kubectl_bin
+
+- name: get kubectl
+  vars:
+    version: v1.20.1
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/{{ version }}/bin/linux/amd64/kubectl
+    checksum: sha256:3f4b52a8072013e4cd34c9ea07e3c0c4e0350b227e00507fb1ae44a9adbf6785
+    dest: /usr/local/bin/kubectl
+    mode: "0755"
+  # assuming kubectl is already managed by a different mechanism
+  # so skip it
+  when: not kubectl_bin.stat.islnk
+  become: true
+
+- import_tasks: archived.yaml
+  vars:
+    name: helm
+    version: v3.4.2
+    platform: linux-amd64
+    url: https://get.helm.sh/helm-{{ version }}-{{ platform }}.tar.gz
+    archive_binary_path: "{{ platform }}/{{ name }}"
+    archive_checksum: sha256:cacde7768420dd41111a4630e047c231afa01f67e49cc0c6429563e024da4b98
+    binary_checksum: sha256:d14d54d59558caebe234500f541fc2064b08d725ed8aa76f957f91c8d6a0fc46
+
+- import_tasks: archived.yaml
+  vars:
+    name: istio
+    version: "1.6.7"
+    platform: linux-amd64
+    url: https://github.com/istio/istio/releases/download/{{ version }}/istio-{{ version }}-{{ platform }}.tar.gz
+    archive_binary_path: "istio-{{ version }}/bin/istioctl"
+    archive_checksum: sha256:3243d2c4bb7a116aa04a6bc21d289fb73cdc704988af1749d2a1f0fb5426be36
+    binary_checksum: sha256:123c278e3d487568953b09a3a86039b850d7d9827d00dce5270f5e5918460743
