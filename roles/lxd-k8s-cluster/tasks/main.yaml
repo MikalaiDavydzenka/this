@@ -1,0 +1,25 @@
+- name: ensure lxc profiles
+  include_role:
+    name: lxd
+    tasks_from: profiles
+  vars:
+    lxc_profiles: "{{ lookup('template', 'profiles.yaml') | from_yaml }}"
+
+- name: ensure lxc containers
+  include_role:
+    name: lxd
+    tasks_from: containers
+  vars:
+    profiles:
+      - default
+      - user
+      - k8s
+    lxc_containers:
+      - name: k8s-master
+        profiles: "{{ profiles }}"
+      - name: k8s-worker1
+        profiles: "{{ profiles }}"
+      - name: k8s-worker2
+        profiles: "{{ profiles }}"
+      - name: k8s-worker3
+        profiles: "{{ profiles }}"

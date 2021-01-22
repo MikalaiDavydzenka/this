@@ -1,0 +1,32 @@
+- name: get lxc containers
+  command: lxc list --format yaml
+  register: existing_lxc_containers
+
+- name: format lxc containers
+  vars:
+    containers_text: |
+      #jinja2: line_statement_prefix:'#'
+      # set containers = existing_lxc_containers.stdout | from_yaml
+      # for container in containers:
+      {{ container.name }}: {{ container | to_json }}
+      # endfor
+  set_fact:
+    existing_lxc_containers: "{{ containers_text | from_yaml }}"
+
+- name: launch container if it doesn't exist
+  command: >-
+    #jinja2: line_statement_prefix:'#'
+    lxc launch ubuntu:20.04 {{ container.name }}
+    # if container.get("target"):
+      --target {{ container.target }}
+    # endif
+    # if container.get("profiles"):
+      # for profile in container.profiles:
+        --profile {{ profile }}
+      # endfor
+    # endif
+  loop: "{{ lxc_containers }}"
+  loop_control:
+    loop_var: container
+    label: create {{ container.name }} container
+  when: container.name not in existing_lxc_containers
