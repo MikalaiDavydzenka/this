@@ -1,0 +1,20 @@
+- name: k8s-master
+  profiles:
+    - default
+    - user
+    - k8s
+- name: k8s-worker1
+  profiles:
+    - default
+    - user
+    - k8s
+- name: k8s-worker2
+  profiles:
+    - default
+    - user
+    - k8s
+- name: k8s-worker3
+  profiles:
+    - default
+    - user
+    - k8s
