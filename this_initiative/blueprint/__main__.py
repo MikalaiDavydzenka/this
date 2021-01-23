@@ -9,6 +9,13 @@ if __name__ == "__main__":
         "action",
         help="apply or destroy blueprint's resources"
     )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        default=False,
+        help="verbose",
+    )
 
     args = parser.parse_args()
     # print(args)

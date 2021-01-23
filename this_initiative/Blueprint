@@ -1,36 +1,44 @@
 #!/usr/bin/env blueprint
 from pathlib import Path
 
-resources = []
-
 ssh_public_key = Path("~/.ssh/id_rsa.pub").expanduser().read_text()
 
-profiles = from_yaml_template(
+profile_specs = from_yaml_template(
     "templates/profiles.yaml",
     ssh_public_key=ssh_public_key
 )
-# for profile in profiles:
-#     resources.append(
-#         Resource(
-#             type=lxd_profile,
-#             definition=profile,
-#         )
-#     )
 
-# for container in from_yaml_template("templates/containers.yaml"):
-#     resources.append(
-#         Resource(
-#             type=lxd_container,
-#             definition=container,
-#         )
-#     )
-resources.append(
-    Resource(
-        type=file,
-        definition={
-            "name": "hosts.ini",
-            "path": "./hosts.ini",
-            "content": from_template("templates/hosts.ini"),
-        },
+profiles = [
+    lxd.profile(profile_spec)
+    for profile_spec in profile_specs
+]
+
+containers = [
+    lxd.container(container_spec)
+    for container_spec in from_yaml_template("templates/containers.yaml")
+]
+
+resources = [
+    *profiles,
+    *containers,
+    file.file({
+        "name": "hosts.ini",
+        "path": "./hosts.ini",
+        "content": from_template(
+            "templates/hosts.ini",
+            containers=containers,
+        ),
+    }),
+]
+
+def steps():
+    apply(profile)
+    apply(containers)
+    wait_for(
+        containers,
+        has_value(it['state']['network']['eth0']['inet']),
     )
-)
+    apply(file("hosts.ini"))
+
+# print(containers)
+

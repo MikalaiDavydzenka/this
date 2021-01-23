@@ -10,16 +10,17 @@ log = logging.getLogger(__name__)
 
 def apply(resources):
     for resource in resources:
-        log.info(f"apply {resource.type} {resource.definition['name']}")
         resource.apply()
 
 def destroy(resources):
     for resource in reversed(resources):
-        log.info(f"destroy {resource.type} {resource.definition['name']}")
         resource.destroy()
 
-def run(action="apply"):
-    logging.basicConfig(level=logging.INFO)
+def run(action="apply", verbose=False):
+    log_level = logging.INFO
+    if verbose:
+        log_level = logging.DEBUG
+    logging.basicConfig(level=log_level)
 
     modules = blueprint.modules.load_all(Path("./blueprint_modules"))
     bp_module = blueprint.modules.load(Path("Blueprint"), exec_module=False)
